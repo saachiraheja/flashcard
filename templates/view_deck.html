@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ deck['name'] }} Deck</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .deck-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .deck-actions a {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .deck-actions a:hover {
+            background-color: #45a049;
+        }
+
+        .flashcards-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .flashcards-list li {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flashcards-list strong {
+            margin-bottom: 5px;
+        }
+
+        .flashcards-list .actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        .flashcards-list .actions a,
+        .flashcards-list .actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+
+        .flashcards-list .actions a {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .flashcards-list .actions a:hover {
+            background-color: #0056b3;
+        }
+
+        .flashcards-list .actions button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .flashcards-list .actions button:hover {
+            background-color: #d32f2f;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #4CAF50;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>{{ deck['name'] }} Deck</h1>
+    </header>
+
+    <div class="container">
+        <!-- Deck Actions -->
+        <div class="deck-actions">
+            <a href="{{ url_for('create_flashcard', deck_id=deck['_id']) }}">Add Flashcard</a>
+            <a href="{{ url_for('quiz_mode', deck_id=deck['_id']) }}">Start Quiz</a>
+        </div>
+
+        <!-- Flashcards List -->
+        <ul class="flashcards-list">
+            {% for flashcard in deck['flashcards'] %}
+                <li>
+                    <div>
+                        <strong>Q:</strong> {{ flashcard['question'] }}<br>
+                        <strong>A:</strong> {{ flashcard['answer'] }}
+                    </div>
+                    <div class="actions">
+                        <a href="{{ url_for('edit_flashcard', deck_id=deck['_id'], flashcard_id=flashcard['_id']|string) }}">Edit</a>
+                        <form action="{{ url_for('delete_flashcard', deck_id=deck['_id'], flashcard_id=flashcard['_id']) }}" method="post" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Deck Edit and Back Link -->
+        <a href="{{ url_for('edit_deck', deck_id=deck['_id']) }}" class="back-link">Edit Deck Name</a>
+        <a href="{{ url_for('index') }}" class="back-link">Back to Decks</a>
+    </div>
+
+</body>
+</html>

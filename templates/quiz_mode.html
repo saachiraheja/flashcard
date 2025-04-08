@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Mode - {{ deck['name'] }} Deck</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .flashcard {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .feedback {
+            margin-top: 20px;
+        }
+
+        .feedback p {
+            font-size: 18px;
+        }
+
+        .feedback p.green {
+            color: green;
+        }
+
+        .feedback p.red {
+            color: red;
+        }
+
+        .next-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 20px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .next-button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #4CAF50;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>{{ deck['name'] }} Deck - Quiz Mode</h1>
+    </header>
+
+    <div class="container">
+        <!-- Flashcard Question -->
+        <div class="flashcard">
+            <div class="question">
+                <strong>Q:</strong> {{ flashcard['question'] }}
+            </div>
+
+            <!-- Form for user to input their answer -->
+            <form method="POST">
+                <input type="text" name="answer" placeholder="Your Answer" required>
+                <button type="submit">Submit</button>
+            </form>
+
+            {% if is_correct is not none %}
+                <div class="feedback">
+                    {% if is_correct %}
+                        <p class="green">Correct!</p>
+                    {% else %}
+                        <p class="red">Incorrect! The correct answer was: {{ flashcard['answer'] }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Button to proceed to the next question -->
+        <a href="{{ url_for('quiz_mode', deck_id=deck['_id'], index=next_index) }}" class="next-button">
+            Next
+        </a>
+
+        <!-- Link to return to the deck view page -->
+        <a href="{{ url_for('view_deck', deck_id=deck['_id']) }}" class="back-link">Back to Deck</a>
+    </div>
+
+</body>
+</html>

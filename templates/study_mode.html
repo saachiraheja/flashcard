@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Mode - {{ deck['name'] }}</title>
+    <style>
+        .flashcard {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .answer {
+            display: none; /* Hide answer initially */
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .show-answer {
+            margin-top: 10px;
+            cursor: pointer;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz Mode for {{ deck['name'] }}</h1>
+    <div id="quiz-container">
+        {% for flashcard in flashcards %}
+            <div class="flashcard">
+                <strong>Q:</strong> {{ flashcard['question'] }}<br>
+                <div class="answer">
+                    <strong>A:</strong> {{ flashcard['answer'] }}
+                </div>
+                <button class="show-answer" onclick="toggleAnswer(this)">Show Answer</button>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('view_deck', deck_id=deck['_id']) }}">Back to Deck</a>
+
+    <script>
+        // Function to toggle the visibility of the answer
+        function toggleAnswer(button) {
+            var answerDiv = button.previousElementSibling; // The div containing the answer
+            if (answerDiv.style.display === "none" || answerDiv.style.display === "") {
+                answerDiv.style.display = "block";
+                button.textContent = "Hide Answer"; // Change button text to 'Hide Answer'
+            } else {
+                answerDiv.style.display = "none";
+                button.textContent = "Show Answer"; // Change button text back to 'Show Answer'
+            }
+        }
+    </script>
+</body>
+</html>
