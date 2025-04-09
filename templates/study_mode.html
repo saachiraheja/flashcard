@@ -5,26 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Mode - {{ deck['name'] }}</title>
     <style>
-        .flashcard {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
         }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        #quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .flashcard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+          
+        }
+
+        .flashcard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .flashcard strong {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
         .answer {
             display: none; /* Hide answer initially */
-            margin-top: 10px;
-            font-weight: bold;
+            margin-top: 15px;
+            font-weight: normal;
+            font-size: 1.1em;
+            color: #555;
+           
         }
+
         .show-answer {
-            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            color: blue;
+            font-size: 1em;
+          
+            margin-top: 15px;
+        }
+
+        .show-answer:hover {
+            background-color: #4CAF50;
+        }
+
+        .show-answer:focus {
+            outline: none;
+        }
+
+        .back-button {
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+            font-size: 1.2em;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .flashcard {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Quiz Mode for {{ deck['name'] }}</h1>
+    <h1>Study Mode for {{ deck['name'] }}</h1>
     <div id="quiz-container">
         {% for flashcard in flashcards %}
             <div class="flashcard">
@@ -36,7 +110,7 @@
             </div>
         {% endfor %}
     </div>
-    <a href="{{ url_for('view_deck', deck_id=deck['_id']) }}">Back to Deck</a>
+    <a href="{{ url_for('view_deck', deck_id=deck['_id']) }}" class="back-button">Back to Deck</a>
 
     <script>
         // Function to toggle the visibility of the answer
@@ -44,9 +118,16 @@
             var answerDiv = button.previousElementSibling; // The div containing the answer
             if (answerDiv.style.display === "none" || answerDiv.style.display === "") {
                 answerDiv.style.display = "block";
+                answerDiv.style.opacity = 0;
+                setTimeout(function() {
+                    answerDiv.style.opacity = 1;
+                }, 10);
                 button.textContent = "Hide Answer"; // Change button text to 'Hide Answer'
             } else {
-                answerDiv.style.display = "none";
+                answerDiv.style.opacity = 0;
+                setTimeout(function() {
+                    answerDiv.style.display = "none";
+                }, 300); // Wait for the fade-out effect before hiding
                 button.textContent = "Show Answer"; // Change button text back to 'Show Answer'
             }
         }

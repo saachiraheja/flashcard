@@ -95,16 +95,16 @@ def create_flashcard(deck_id):
 
     return render_template('create_flashcard.html', deck=deck)
 
-# Update Flashcard
-@app.route('/decks/<deck_id>/flashcards/<flashcard_id>/edit', methods=['GET', 'POST'])
+# Edit Flashcard Route
+@app.route('/decks/<deck_id>/flashcards/<int:flashcard_id>/edit', methods=['GET', 'POST'])
 def edit_flashcard(deck_id, flashcard_id):
+    # Retrieve the deck from the database
     deck = decks_collection.find_one({"_id": ObjectId(deck_id)})
     if not deck:
         return "Deck not found!", 404
 
-    flashcard = next((fc for fc in deck['flashcards'] if str(fc['_id']) == flashcard_id), None)
-    if not flashcard:
-        return "Flashcard not found!", 404
+    # Access the flashcard based on the flashcard_id (index in the array)
+    flashcard = deck['flashcards'][flashcard_id]
 
     if request.method == 'POST':
         new_question = request.form['question']
@@ -118,24 +118,31 @@ def edit_flashcard(deck_id, flashcard_id):
             )
             return redirect(url_for('view_deck', deck_id=deck_id))
 
-    return render_template('edit_flashcard.html', deck=deck, flashcard=flashcard)
+    return render_template('edit_flashcard.html', deck=deck, flashcard=flashcard, flashcard_id=flashcard_id)
 
-# Delete Flashcard
+
 @app.route('/decks/<deck_id>/flashcards/<flashcard_id>/delete', methods=['POST'])
 def delete_flashcard(deck_id, flashcard_id):
+    # Convert the deck_id to ObjectId for MongoDB
     deck = decks_collection.find_one({"_id": ObjectId(deck_id)})
+    
     if not deck:
         return "Deck not found!", 404
 
-    flashcard = next((fc for fc in deck['flashcards'] if str(fc['_id']) == flashcard_id), None)
-    if not flashcard:
+    # Find the flashcard by its index in the array (flashcard_id is the index)
+    flashcard_index = int(flashcard_id)
+    if flashcard_index < 0 or flashcard_index >= len(deck['flashcards']):
         return "Flashcard not found!", 404
 
+    # Remove the flashcard from the 'flashcards' array using the index
     decks_collection.update_one(
         {"_id": ObjectId(deck_id)},
-        {"$pull": {"flashcards": {"_id": flashcard["_id"]}}}
+        {"$pull": {"flashcards": {"$in": [deck['flashcards'][flashcard_index]]}}}
     )
+
+    # Redirect back to the deck view
     return redirect(url_for('view_deck', deck_id=deck_id))
+
 
 # Quiz Mode: Random Flashcards from a Deck
 from flask import request, redirect, url_for
@@ -147,7 +154,6 @@ def quiz_mode(deck_id):
         return "Deck not found!", 404
 
     flashcards = deck['flashcards']
-    random_flashcards = random.sample(flashcards, min(len(flashcards), 5))  # Limit to 5 random cards
 
     # Get the current index from the query string (if any), default to 0
     index = int(request.args.get('index', 0))
@@ -156,15 +162,14 @@ def quiz_mode(deck_id):
     is_correct = None
     if request.method == 'POST':
         user_answer = request.form['answer'].strip()
-        correct_answer = random_flashcards[index]['answer']
+        correct_answer = flashcards[index]['answer']
         is_correct = user_answer.lower() == correct_answer.lower()
 
     # Determine the next index (circular loop)
-    next_index = (index + 1) % len(random_flashcards)
-
+    next_index = (index + 1) % len(flashcards)
     return render_template('quiz_mode.html', 
                            deck=deck, 
-                           flashcard=random_flashcards[index],
+                           flashcard=flashcards[index],
                            index=index,
                            is_correct=is_correct,
                            next_index=next_index)
@@ -204,6 +209,19 @@ def api_add_flashcard(deck_id):
         {"$push": {"flashcards": flashcard}}
     )
     return jsonify({"message": "Flashcard added successfully!"}), 201
+@app.route('/decks/<deck_id>/study', methods=['GET'])
+def study_mode(deck_id):
+    # Fetch the deck from the database using ObjectId for the deck_id
+    deck = decks_collection.find_one({"_id": ObjectId(deck_id)})
+    
+    if not deck:
+        return "Deck not found!", 404
+
+    # Get the flashcards from the deck
+    flashcards = deck.get('flashcards', [])
+
+    # Render the study mode template
+    return render_template('study_mode.html', deck=deck, flashcards=flashcards)
 
 if __name__ == '__main__':
     app.run(debug=True)

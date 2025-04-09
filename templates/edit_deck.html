@@ -6,7 +6,7 @@
     <title>Edit Deck</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
             margin: 0;
             padding: 0;
@@ -15,18 +15,18 @@
         h1 {
             text-align: center;
             color: #333;
-            margin-top: 20px;
+            margin-top: 30px;
+            font-size: 2em;
         }
 
         .container {
             width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 500px;
+            margin: 50px auto;
             background-color: #fff;
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            margin-top: 50px;
         }
 
         label {
@@ -38,41 +38,64 @@
 
         input[type="text"] {
             width: 100%;
-            padding: 10px;
+            padding: 14px;
             font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 6px;
             margin-bottom: 20px;
             box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color:  #4CAF50;
+            outline: none;
         }
 
         button {
-            background-color: #007bff;
+            background-color:  #4CAF50;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            border-radius: 6px;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.2s;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #4CAF50;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(1);
         }
 
         a {
             display: inline-block;
             text-align: center;
-            color: #007bff;
+            color:  #4CAF50;
             text-decoration: none;
             margin-top: 20px;
+            font-size: 16px;
         }
 
         a:hover {
             text-decoration: underline;
         }
 
+        /* Responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+        }
     </style>
 </head>
 <body>
