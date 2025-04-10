@@ -7,7 +7,6 @@
     <!-- Adding Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -241,6 +240,17 @@
     </div>
 
     <script>
+   if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/static/service-worker.js')  // The path is now relative to the root
+    .then(registration => {
+      console.log('Service Worker registered with scope: ', registration.scope);
+    })
+    .catch(error => {
+      console.log('Service Worker registration failed: ', error);
+    });
+}
+</script>
+<script>
         // Show the delete confirmation modal
         function showDeleteModal(deckId) {
             document.getElementById('deleteModal').style.display = 'block';

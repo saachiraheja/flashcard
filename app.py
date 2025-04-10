@@ -19,6 +19,11 @@ db = client['flashcard_app']
 decks_collection = db['decks']
 
 # Home Route (Shows all decks)
+@app.after_request
+def add_service_worker_header(response):
+    # Allow service worker to control the entire app by setting this header
+    response.headers['Service-Worker-Allowed'] = '/'
+    return response
 @app.route('/')
 def index():
     decks = list(decks_collection.find())
